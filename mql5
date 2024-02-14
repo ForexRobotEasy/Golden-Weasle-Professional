@@ -1,0 +1,121 @@
+
+//+------------------------------------------------------------------+
+//|                                                        Golden Weasle Professional |
+//|                                                    forexroboteasy.com |
+//|                                                  Developed by Forex Robot Easy Team |
+//+------------------------------------------------------------------+
+
+//---- input parameters
+input int TimeFrame1 = 5;   // Time Frame 1
+input int TimeFrame2 = 15;  // Time Frame 2
+input int TimeFrame3 = 30;  // Time Frame 3
+input ENUM_SIGNAL_TYPE SignalType = SIGNAL_TYPE_1;  // Type of trade signals
+
+//---- global variables
+datetime SignalTime;  // Time of the trading signal
+
+//+------------------------------------------------------------------+
+//| Expert initialization function |
+//+------------------------------------------------------------------+
+int OnInit()
+{
+    //---- check compatibility
+    if (TerminalInfoInteger(TERMINAL_MQL5))
+    {
+        Print('Golden Weasle Professional is not compatible with MetaTrader 5');
+        return INIT_FAILED;
+    }
+    
+    //---- set time frame
+    if (!SetTimeframes())
+    {
+        Print('Failed to set time frames');
+        return INIT_FAILED;
+    }
+    
+    return INIT_SUCCEEDED;
+}
+
+//+------------------------------------------------------------------+
+//| Expert deinitialization function |
+//+------------------------------------------------------------------+
+void OnDeinit(const int reason)
+{
+    //---- clean up
+    SignalTime = 0;
+}
+
+//+------------------------------------------------------------------+
+//| Expert tick function |
+//+------------------------------------------------------------------+
+void OnTick()
+{
+    //---- check for new signal
+    if (isNewSignal())
+    {
+        //---- execute trading algorithm
+        ExecuteTradingAlgorithm();
+    }
+}
+
+//+------------------------------------------------------------------+
+//| Check for new signal |
+//+------------------------------------------------------------------+
+bool isNewSignal()
+{
+    datetime currentTime = Time[0];
+    
+    if (currentTime != SignalTime)
+    {
+        SignalTime = currentTime;
+        return true;
+    }
+    
+    return false;
+}
+
+//+------------------------------------------------------------------+
+//| Set time frames |
+//+------------------------------------------------------------------+
+bool SetTimeframes()
+{
+    if (!SetTimeframe(TimeFrame1))
+        return false;
+    
+    if (!SetTimeframe(TimeFrame2))
+        return false;
+    
+    if (!SetTimeframe(TimeFrame3))
+        return false;
+    
+    return true;
+}
+
+//+------------------------------------------------------------------+
+//| Set individual time frame |
+//+------------------------------------------------------------------+
+bool SetTimeframe(const int timeframe)
+{
+    if (!ChartSetInteger(0, CHART_FOREX, timeframe))
+        return false;
+    
+    return true;
+}
+
+//+------------------------------------------------------------------+
+//| Execute trading algorithm |
+//+------------------------------------------------------------------+
+void ExecuteTradingAlgorithm()
+{
+    //---- implement trading algorithm here
+    //---- for demonstration purposes, just print a message
+    Print('New trading signal received at ', TimeToString(SignalTime));
+}
+
+//+------------------------------------------------------------------+
+//| Entry point of the program |
+//+------------------------------------------------------------------+
+void OnStart()
+{
+    //---- do nothing
+}
